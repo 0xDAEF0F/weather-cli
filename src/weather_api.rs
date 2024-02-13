@@ -2,14 +2,14 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ApiResponse {
-    pub results: Vec<Location>,
+    pub results: Option<Vec<Location>>,
     pub generationtime_ms: f64,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Location {
     id: i64,
-    name: String,
+    pub name: String,
     latitude: f64,
     longitude: f64,
     elevation: f64,
@@ -20,7 +20,7 @@ pub struct Location {
     timezone: String,
     population: Option<i64>,
     country_id: i64,
-    country: String,
-    admin1: Option<String>,
+    pub country: String,
+    pub admin1: Option<String>,
     admin2: Option<String>,
 }

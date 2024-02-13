@@ -47,7 +47,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>>  {
     )?
     .json()?;
 
-    println!("res: {:?}", resp);
+    if resp.results.is_none() {
+        println!("No results for what you are looking for. Try again.");
+        return Ok(())
+    }
+
+    for location in resp.results.unwrap().iter().take(5) {
+        println!("name: {} — country: {} — admin1: {:?}",
+        location.name, location.country, location.admin1);
+    }
 
     Ok(())
 }
