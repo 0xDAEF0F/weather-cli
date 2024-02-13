@@ -3,6 +3,7 @@ use clap::builder::TypedValueParser;
 use temperature_units::TempUnits;
 
 mod temperature_units;
+mod weather_api;
 
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
@@ -31,16 +32,22 @@ enum Commands {
     },
 }
 
-
-fn main() {
+fn main() -> Result<(), Box<dyn std::error::Error>>  {
     let cli = Cli::parse();
 
-    match &cli.command {
+    let (city, _unit) = match &cli.command {
         Some(Commands::Temperature { city, unit }) => {
-            println!("city: {city} — units: {unit}");
+            (city, unit)
         }
-        None => {}
-    }
+        None => panic!("unreachable"),
+    };
 
-    // Continued program logic goes here...
+    let resp: weather_api::ApiResponse = reqwest::blocking::get(
+        format!("https://geocoding-api.open-meteo.com/v1/search?name={city}"),
+    )?
+    .json()?;
+
+    println!("res: {:?}", resp);
+
+    Ok(())
 }
