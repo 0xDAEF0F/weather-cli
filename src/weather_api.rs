@@ -10,8 +10,8 @@ pub struct ApiResponse {
 pub struct Location {
     id: i64,
     pub name: String,
-    latitude: f64,
-    longitude: f64,
+    pub latitude: f64,
+    pub longitude: f64,
     elevation: f64,
     feature_code: String,
     country_code: String,
@@ -23,4 +23,10 @@ pub struct Location {
     pub country: String,
     pub admin1: Option<String>,
     admin2: Option<String>,
+}
+
+impl Location {
+    pub fn get_coordinates(&self) -> (f64, f64) {
+        (self.latitude, self.longitude)
+    }
 }
