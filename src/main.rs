@@ -26,7 +26,7 @@ enum Commands {
             long, 
             short,
             default_value_t = TempUnits::Celsius,
-            value_parser = clap::builder::PossibleValuesParser::new(["fahrenheit", "celsius", "kelvin"])
+            value_parser = clap::builder::PossibleValuesParser::new(["fahrenheit", "celsius"])
                 .map(|s| s.parse::<TempUnits>().unwrap())
         )]
         unit: TempUnits,
@@ -36,7 +36,7 @@ enum Commands {
 fn main() -> Result<(), Box<dyn std::error::Error>>  {
     let cli = Cli::parse();
 
-    let (city, _unit) = match &cli.command {
+    let (city, unit) = match &cli.command {
         Some(Commands::Temperature { city, unit }) => {
             (city, unit)
         }
@@ -89,7 +89,24 @@ fn main() -> Result<(), Box<dyn std::error::Error>>  {
         }
     };
 
-    let (latitude, longitude) = opts[num].get_coordinates();
+    let (latitude, longitude) = &opts[num].get_coordinates();
+
+    let resp: weather_api::ApiResponseTwo = reqwest::blocking::get(
+        format!("https://api.open-meteo.com/v1/forecast?latitude={}&longitude={}&hourly=temperature_2m&temperature_unit={}",
+        latitude, longitude, unit)
+    )?
+    .json()?;
+
+    let temperature = resp.get_current_temperature();
+
+    if temperature.is_none() {
+        eprintln!("Was not able to retrieve the temperature. Try again.");
+        std::process::exit(1);
+    }
+
+    let temperature = temperature.unwrap();
+
+    println!("The temperature in {} is: {} {}", city, temperature, unit);
 
     Ok(())
 }

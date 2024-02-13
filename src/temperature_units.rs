@@ -2,7 +2,6 @@
 pub enum TempUnits {
     Fahrenheit,
     Celsius,
-    Kelvin,
 }
 
 impl std::fmt::Display for TempUnits {
@@ -10,7 +9,6 @@ impl std::fmt::Display for TempUnits {
         let s = match self {
             TempUnits::Celsius => "celsius",
             TempUnits::Fahrenheit => "fahrenheit",
-            TempUnits::Kelvin => "kelvin",
         };
         s.fmt(f)
     }
@@ -23,7 +21,6 @@ impl std::str::FromStr for TempUnits {
         match s {
             "fahrenheit" => Ok(Self::Fahrenheit),
             "celsius" => Ok(Self::Celsius),
-            "kelvin" => Ok(Self::Kelvin),
             _ => Err(format!("Unknown units: {s}")),
         }
     }
